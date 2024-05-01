@@ -17,7 +17,7 @@ const Todo = ({ arr }) => {
 
 	return (
 		<List className='todo__list'>
-			<ListItem>
+			<ListItem style={{ opacity: completed ? 1 : 0.5, cursor: 'pointer' }}>
 				<ListItemAvatar>
 					<CheckIcon
 						style={{ opacity: completed ? 1 : 0.5, cursor: 'pointer' }}
