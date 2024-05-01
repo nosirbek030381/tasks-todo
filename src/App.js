@@ -11,12 +11,15 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import Todo from './components/todo';
 import { db } from './firebase.js';
+
 const q = query(collection(db, 'todos'), orderBy('timestamp', 'desc'));
+
 function App() {
 	const [todos, setTodos] = useState([]);
 	const [input, setInput] = useState('');
+
 	useEffect(() => {
-		onSnapshot(q, snapshot => {
+		const unsubscribe = onSnapshot(q, snapshot => {
 			setTodos(
 				snapshot.docs.map(doc => ({
 					id: doc.id,
@@ -24,19 +27,25 @@ function App() {
 				}))
 			);
 		});
-	}, [input]);
+
+		// Cleanup function to unsubscribe from snapshot listener
+		return () => unsubscribe();
+	}, []); // Runs only once on component mount
+
 	const addTodo = e => {
 		e.preventDefault();
 		addDoc(collection(db, 'todos'), {
 			todo: input,
+			completed: false, // Initialize with completed: false
 			timestamp: serverTimestamp(),
 		});
 		setInput('');
 	};
+
 	return (
 		<div className='App'>
-			<h2> TODO List App</h2>
-			<form>
+			<h2>TODO List App</h2>
+			<form onSubmit={addTodo}>
 				<TextField
 					id='outlined-basic'
 					label='Make Todo'
@@ -46,7 +55,7 @@ function App() {
 					value={input}
 					onChange={e => setInput(e.target.value)}
 				/>
-				<Button variant='contained' color='primary' onClick={addTodo}>
+				<Button type='submit' variant='contained' color='primary'>
 					Add Todo
 				</Button>
 			</form>
@@ -58,4 +67,5 @@ function App() {
 		</div>
 	);
 }
+
 export default App;

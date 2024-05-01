@@ -10,3 +10,7 @@
 	display: grid;
 	place-items: center;
 }
+
+.completed {
+	text-decoration: line-through;
+}
